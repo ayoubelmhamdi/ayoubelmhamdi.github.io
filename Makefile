@@ -1,4 +1,4 @@
-REPO=/root/book/lll1
+REPO=$(shell git rev-parse --show-toplevel)	
 build:
 	@echo "run tools/gh-pages"
 	@./tools/gh-pages.sh
