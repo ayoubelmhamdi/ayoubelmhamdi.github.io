@@ -1,7 +1,7 @@
 REPO=$(shell git rev-parse --show-toplevel)	
 build:
 	@echo "run tools/gh-pages"
-	@./tools/gh-pages.sh
+	@gh-pages
 	@echo "Done"
 
 clean:
