@@ -1,55 +1,78 @@
 #!/bin/bash
 
+TMP="/tmp/mdbook"
+GITBOOK="lll1"
+BOOK="/root/book/$GITBOOK"
+echo "$GITBOOK"
+
 # dir="$PWD"
-DIR="/root/book/ayoubelmhamdi.github.io"
-ROOT="$(cd $DIR;git rev-parse --show-toplevel)"
+ROOT="$(cd $BOOK;git rev-parse --show-toplevel)"
 
 if [[ -d "$ROOT" ]];then
     echo "project: $ROOT"
     echo
 else
     echo "can't found your project in:"
-    echo "$DIR"
+    echo "$PWD"
     exit 1
 fi
 
-cd "$DIR"
+cd "$ROOT"
+echo "$ROOT"
+
 if ! git worktree list | grep gh-pages >/dev/null 2>&1;then
-    echo "no workspace gh-pages"
-    rm book
-    git branch gh-pages
-    git worktree add book gh-pages
-    cd book
-    git rm -rf .
+
+    # if not have woktree, perhaps , we don't have branch gh-pages
+    echo "no worktree called gh-pages"
+    # git branch gh-pages || true
+
+    # setup tmp files
+    # rm -rf "$TMP/$GITBOOK"
+    # mkdir -p "$TMP/$GITBOOK"/book/html
+
+    # create worktree
+    # cd "$ROOT"
+    git worktree add gh-pages || echo "can't create worktree"
+    echo 'echo 1'
+
+    # perhaps i don't needed when i use --dist-dir=/tmp/..
+    if ! cd gh-pages ;then
+        echo "non dir gh-pahes"
+        exit 1
+    else
+        echo 'cd work'
+        pwd
+    fi
+    echo 'echo 2'
+    git rm -rf . 
     git clean -fxd
     git update-ref -d refs/heads/gh-pages
 fi
 
-# fix
-# git worktree remove /root/book/ayoubelmhamdi.github.io/book  && git branch -D gh-pages
 
-# mdbook or exit
-# result=$(/usr/bin/mdbook build "$dir" 2>&1 >/dev/null)
-# status=$?
 
-# echo "---"
-# ls
-cd "$DIR"
+cd "$ROOT"
 if ! mdbook build >/dev/null 2>&1;then
     echo "failed"
     mdbook build
     exit 1
 fi
 
-cd "$DIR/book"
+# t for preserve old time
+rsync -t --checksum book/html/* gh-pages --out-format="--> %f"
+
+if ! cd gh-pages ;then
+    echo "non dir gh-pahes"
+    exit 1
+fi
+
+
 fresh="nothing to commit, working tree clean"
 getstatus="$(git status | grep "$fresh")"
 if [[ "$getstatus" != "$fresh" ]];then
     git add .
-    if ! git commit --amend --no-edit;then
-        echo "first commit"
-        git commit -m "expected: one commit"
-    fi
-    git push -u origin gh-pages --force
+    git commit -m "commit $(date)"
+    git push --set-upstream origin gh-pages -f
+else
+    echo "status no"
 fi
-
