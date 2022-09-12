@@ -1,12 +1,6 @@
 #!/bin/bash
 
-TMP="/tmp/mdbook"
-GITBOOK="lll1"
-BOOK="/root/book/$GITBOOK"
-echo "$GITBOOK"
-
-# dir="$PWD"
-ROOT="$(cd $BOOK;git rev-parse --show-toplevel)"
+ROOT="$(git rev-parse --show-toplevel)"
 
 if [[ -d "$ROOT" ]];then
     echo "project: $ROOT"
@@ -26,12 +20,6 @@ if ! git worktree list | grep gh-pages >/dev/null 2>&1;then
     echo "no worktree called gh-pages"
     # git branch gh-pages || true
 
-    # setup tmp files
-    # rm -rf "$TMP/$GITBOOK"
-    # mkdir -p "$TMP/$GITBOOK"/book/html
-
-    # create worktree
-    # cd "$ROOT"
     git worktree add gh-pages || echo "can't create worktree"
     echo 'echo 1'
 
