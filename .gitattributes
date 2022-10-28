@@ -1,11 +1,5 @@
 # prevent auto generated js and css 
-theme/favicon.png linguist-vendored
-theme/favicon.svg linguist-vendored
-theme/head.hbs linguist-vendored
-theme/highlight.css linguist-vendored
-theme/highlight.js linguist-vendored
-theme/tabbed-code-blocks.css linguist-vendored
-theme/tabbed-code-blocks.js linguist-vendored
+theme/* linguist-vendored
 
 # alias objC to matlab
 *.m linguist-language=matlab
